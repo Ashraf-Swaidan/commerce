@@ -93,13 +93,21 @@ def create_listing(request):
 
 def active_listings(request):
     active_listings = AuctionListing.objects.filter(isActive=True)
+    
+    # Initialize highest_bid as None or 0, depending on your requirements
+    highest_bid = None 
 
     for listing in active_listings:
-        highest_bid = Bid.objects.filter(listing=listing).aggregate(Max('price'))['price__max']
-        listing.highest_bid = highest_bid
+        # Calculate highest_bid for each listing
+        listing.highest_bid = Bid.objects.filter(listing=listing).aggregate(Max('price'))['price__max']
+        # You can also set highest_bid for overall context if needed
+        if listing.highest_bid is not None:  # Only update if it has a value
+            highest_bid = max(highest_bid or 0, listing.highest_bid)  # Update the highest overall bid
+
     return render(request, 'auctions/index.html', {
-        'active_listings':active_listings, 'highest_bid': highest_bid
+        'active_listings': active_listings, 'highest_bid': highest_bid
     })
+
 
 def listing_details(request,listing_id):
     listing = AuctionListing.objects.get(pk=listing_id)
