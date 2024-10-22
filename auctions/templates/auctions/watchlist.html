@@ -1,0 +1,45 @@
+{% extends 'auctions/layout.html' %}
+
+{% block title %}Watchlist{% endblock %}
+
+{% block body %}
+    <h2 class="mb-4">Watchlist</h2>
+
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
+            {% for listing in listings %}
+            <div class="col mb-4">
+                <div class="card h-100" style="height: 100%;">
+                    {% if listing.image_url %}
+                        <img src="{{ listing.image_url }}" class="card-img-top img-fluid" alt="{{listing.title }}" style="object-fit: cover; width: 100%; height: 100%;">
+                    {% else %}
+                        <!-- If no image -->
+                        <img src="https://www.rallis.com/Upload/Images/thumbnail/Product-inside.png" class="card-img-top img-fluid" alt="No Image" style="object-fit: cover; width: 100%; height: 100%;">
+                    {% endif %}
+                    
+                    <div class="card-body">
+                        <h5 class="card-title">{{ listing.title }}</h5>
+                        <p class="card-text">{{listing.description }}</p>
+                        <p class="card-text">Starting Bid: ${{ listing.starting_bid }}</p>
+
+                        {% if listing.highest_bid %}
+                        <p class="card-text fw-bold">Highest Ongoing Bid : ${{listing.highest_bid}}</p>
+                       {% else %}
+                           <p class="card-text fw-light">No Bids Placed Yet</p>
+                       {% endif %}
+
+                        <a href="{% url 'listing_details' listing.id %}" class="btn btn-dark">View Details</a>
+                        <a href="{% url 'unwatchlist' listing.id %}" class="btn btn-danger">X</a>
+                    </div>
+
+                    <div class="card-footer">
+                         {% if not listing.isActive %}
+                    <span class="badge bg-secondary">Closed</span>
+                    {% else %}
+                    <span class="badge bg-success">Active</span>
+                    {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+    </div>
+{% endblock %}

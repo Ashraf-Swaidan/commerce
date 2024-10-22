@@ -1,0 +1,21 @@
+# IDE/Editor files
+.vscode/
+.idea/
+*.pyc
+*.swp
+
+# Django files
+__pycache__/
+*.log
+db.sqlite3
+staticfiles/
+media/
+
+# Environment-specific files
+.env
+.env.*
+
+# Other common ignored files
+.DS_Store
+Thumbs.db
+node_modules/
