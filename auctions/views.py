@@ -74,22 +74,27 @@ def create_listing(request):
             'title': '',
             'description': '',
             'starting_bid': '',
-            'image_url':'',
-            'category':'',
+            'image_url': '',
         })
     else:
         form = CreateListingForm(request.POST)
-        if(form.is_valid()):
+        if form.is_valid():
             listing = form.save(commit=False)
             listing.owner = request.user
-            listing.save()
+            
+            try:
+                listing.save()
 
-            watchlist = Watchlist.objects.get(user=request.user)
-            watchlist.listing.add(listing)
+                watchlist = Watchlist.objects.get(user=request.user)
+                watchlist.listing.add(listing)
 
-            return redirect('listing_details', listing_id=listing.id)
-        
-    return render(request, 'auctions/create_listing.html', {'form':form})
+                messages.success(request, 'Listing created successfully!')
+                return redirect('listing_details', listing_id=listing.id)
+            except Exception as e:
+                # Log the error if needed: logger.error(e)
+                messages.error(request, 'Failed to create listing: {}'.format(str(e)))
+
+    return render(request, 'auctions/create_listing.html', {'form': form})
 
 def active_listings(request):
     active_listings = AuctionListing.objects.filter(isActive=True)
